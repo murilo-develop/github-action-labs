@@ -1,0 +1,106 @@
+#https://learn.microsoft.com/en-us/azure/devops/pipelines
+
+name: PipelineForMain
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  - template: templates/constants.yml
+  - name: 'APP_NAME'
+    value: 'rack-pool-api'
+
+trigger:
+  batch: true
+  branches:
+    include:
+      - main
+
+stages:
+  - stage: GetAllVariables
+    displayName: 'Collect all needed variables for the pipeline usage'
+    condition: always()
+    jobs:
+      - job: GetAllVariables
+        displayName: 'Export variables for the environment'
+        steps:
+          - template: templates/get-variables.yml
+            parameters:
+              isMain: $(IS_MAIN_BRANCH)
+              dockerRegistry: $(DOCKER_REGISTRY)
+              dockerImageBase: $(DOCKER_IMAGE_BASE)
+
+  - stage: DependencyPluginPropertyCheck
+    displayName: 'Dependency, Plugin and Update check'
+    dependsOn: GetAllVariables
+    jobs:
+      - job:
+        steps:
+          - template: templates/dependency-quality-check.yml
+
+  - stage: UnitIntegrationTests
+    displayName: 'Execute Unit and Integration tests'
+    dependsOn: DependencyPluginPropertyCheck
+    jobs:
+      - job:
+        steps:
+          - template: templates/run-automated-tests.yml
+
+  - stage: BuildPackage
+    displayName: 'Build maven package'
+    dependsOn: UnitIntegrationTests
+    jobs:
+      - job:
+        steps:
+          - template: templates/build-package.yml
+
+  - stage: BuildImage
+    displayName: 'Build docker image'
+    dependsOn:
+      - GetAllVariables
+      - BuildPackage
+    variables:
+      dockerImage: $[stageDependencies.GetAllVariables.GetAllVariables.outputs['outputVars.DOCKER_IMAGE']]
+      dockerImageLatest: $[stageDependencies.GetAllVariables.GetAllVariables.outputs['outputVars.DOCKER_IMAGE_LATEST']]
+    jobs:
+      - job:
+        steps:
+          - template: templates/build-image.yml
+            parameters:
+              appName: $(APP_NAME)
+              dockerRegistry: $(DOCKER_REGISTRY)
+              dockerImage: $(dockerImage)
+              dockerImageLatest: $(dockerImageLatest)
+
+  - stage: Deploy
+    displayName: 'Deploy BE to Container APP'
+    dependsOn:
+      - GetAllVariables
+      - BuildImage
+    variables:
+      dockerImageLatest: $[stageDependencies.GetAllVariables.GetAllVariables.outputs['outputVars.DOCKER_IMAGE_LATEST']]
+    jobs:
+      - job: DeployApp
+        displayName: 'Deploy app'
+        steps:
+          - template: templates/deploy.yml
+            parameters:
+              dockerImageLatest: $(dockerImageLatest)
+              dbHost: $(DB_HOST)
+              dbUser: $(DB_USER)
+              dbPort: $(DB_PORT)
+              dbName: $(DB_NAME)
+              dbSchema: $(DB_SCHEMA)
+              msalAuthority: $(MSAL_AUTHORITY)
+
+  - stage: UpdateDatabase
+    displayName: 'Update Database'
+    dependsOn: Deploy
+    jobs:
+      - job:
+        steps:
+          - template: templates/update-database.yml
+            parameters:
+              dbUrl: $(DB_URL)
+              dbUser: $(DB_USER)
+              dbConnectUsername: $(DB_CONNECT_USERNAME)

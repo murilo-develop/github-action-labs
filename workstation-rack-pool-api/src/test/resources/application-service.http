@@ -1,0 +1,78 @@
+### Create a Team
+POST {{host}}/team HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+    "name": "Smallville",
+    "product": "Superman ComicBook"
+}
+
+### Create a Team Member
+POST {{host}}/team-member HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+    "name": "Peter Parker",
+    "ctwCode": "CTW99999",
+    "role": "ROCKSTAR_DEVELOPER",
+    "team": {
+        "id": "{{teamId}}"
+    }
+}
+
+### Create a Work Station
+POST {{host}}/work-station HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+    "name": "Númenor"
+}
+
+### Fecth all Bookings
+GET {{host}}/booking HTTP/1.1
+Authorization: Bearer {{accessToken}}
+
+### Create a Booking
+POST {{host}}/booking HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+    "teamMember": {
+        "id": "{{teamMemberId}}"
+    },
+    "workStation": {
+        "id": "{{workStationId}}"
+    },
+    "bookingFrom": "2024-07-04T00:00:00",
+    "bookingTo": "2024-07-05T00:00:00",
+    "status": "PENDING"
+}
+
+### Fecth a Booking
+GET {{host}}/booking/{{bookingId}} HTTP/1.1
+Authorization: Bearer {{accessToken}}
+
+### Update a Booking or Create new one
+PUT {{host}}/booking/{{bookingId}} HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+    "teamMember": {
+        "id": "{{teamMemberId}}"
+    },
+    "workStation": {
+        "id": "{{workStationId}}"
+    },
+    "bookingFrom": "2024-07-01T00:00:00",
+    "bookingTo": "2024-07-03T00:00:00",
+    "status": "CANCELED"
+}
+
+### Remove a Booking
+DELETE {{host}}/booking/{{bookingId}} HTTP/1.1
+Authorization: Bearer {{accessToken}}

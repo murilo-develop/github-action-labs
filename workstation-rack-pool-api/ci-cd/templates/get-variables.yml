@@ -1,0 +1,70 @@
+parameters:
+  - name: isMain
+  - name: dockerRegistry
+  - name: dockerImageBase
+
+steps:
+  - bash: |
+      echo "---- DEBUG Parameters: "
+      echo "-------- isMain: ${{ parameters.isMain }}"
+      echo "-------- dockerRegistry: ${{ parameters.dockerRegistry }}"
+      echo "-------- dockerImageBase: ${{ parameters.dockerImageBase }}"
+    displayName: 'Debug input parameters'
+  - bash: |
+      if [ ${{ parameters.isMain }} == "True" ]; then
+        echo "##vso[task.setvariable variable=ENV_NAME]prod"
+      else
+        echo "##vso[task.setvariable variable=ENV_NAME]dev"
+      fi
+    displayName: 'Get the environment name'
+  - task: PowerShell@2
+    displayName: 'Get the Application version'
+    inputs:
+      targetType: 'inline'
+      script: |
+        [xml]$pomXml = Get-Content pom.xml
+        $VERSION=$pomXml.project.version
+        echo "##vso[task.setvariable variable=APP_VERSION]$VERSION"
+  - script: |
+      echo "##vso[task.setvariable variable=LAST_COMMIT_HASH]$(git rev-parse --short HEAD)"
+    displayName: 'Get the last commit hash'
+  - bash: |
+      if [ $(ENV_NAME) == "prod" ]; then
+        echo "##vso[task.setvariable variable=DOCKER_IMAGE_TAG]$APP_VERSION"
+        echo "##vso[task.setvariable variable=DOCKER_IMAGE_TAG_LATEST]latest"
+      elif [ $(ENV_NAME) == "stage" ]; then
+        echo "##vso[task.setvariable variable=DOCKER_IMAGE_TAG]$APP_VERSION-rc-$LAST_COMMIT_HASH"
+        echo "##vso[task.setvariable variable=DOCKER_IMAGE_TAG_LATEST]$APP_VERSION-latest"
+      elif [ $(ENV_NAME) == "hotfix" ]; then
+        echo "##vso[task.setvariable variable=DOCKER_IMAGE_TAG]$APP_VERSION-hf-$LAST_COMMIT_HASH"
+        echo "##vso[task.setvariable variable=DOCKER_IMAGE_TAG_LATEST]$APP_VERSION-latest"
+      elif [ $(ENV_NAME) == "dev" ]; then
+        echo "##vso[task.setvariable variable=DOCKER_IMAGE_TAG]$LAST_COMMIT_HASH"
+        echo "##vso[task.setvariable variable=DOCKER_IMAGE_TAG_LATEST]dev-latest"
+      else
+        echo "The environment is unknown"
+        exit 1
+      fi
+    displayName: 'Get the docker image tags'
+  - bash: |
+      echo "##vso[task.setvariable variable=ENV_NAME;isoutput=true]$ENV_NAME"
+      echo "##vso[task.setvariable variable=APP_VERSION;isoutput=true]$APP_VERSION"
+      echo "##vso[task.setvariable variable=LAST_COMMIT_HASH;isoutput=true]$LAST_COMMIT_HASH"
+      echo "##vso[task.setvariable variable=DOCKER_IMAGE_TAG;isoutput=true]$DOCKER_IMAGE_TAG"
+      echo "##vso[task.setvariable variable=DOCKER_IMAGE_TAG_LATEST;isoutput=true]$DOCKER_IMAGE_TAG_LATEST"
+      echo "##vso[task.setvariable variable=DOCKER_IMAGE_BASE;isoutput=true]${{ parameters.dockerImageBase }}"
+      echo "##vso[task.setvariable variable=DOCKER_IMAGE;isoutput=true]${{ parameters.dockerImageBase }}:$DOCKER_IMAGE_TAG"
+      echo "##vso[task.setvariable variable=DOCKER_IMAGE_LATEST;isoutput=true]${{ parameters.dockerImageBase }}:$DOCKER_IMAGE_TAG_LATEST"
+    name: outputVars
+    displayName: 'Expose all variables'
+  - bash: |
+      echo "---- DEBUG Output Variables:"
+      echo "-------- ENV_NAME: $(outputVars.ENV_NAME)"
+      echo "-------- APP_VERSION: $(outputVars.APP_VERSION)"
+      echo "-------- LAST_COMMIT_HASH: $(outputVars.LAST_COMMIT_HASH)"
+      echo "-------- DOCKER_IMAGE_TAG: $(outputVars.DOCKER_IMAGE_TAG)"
+      echo "-------- DOCKER_IMAGE_TAG_LATEST: $(outputVars.DOCKER_IMAGE_TAG_LATEST)"
+      echo "-------- DOCKER_IMAGE_BASE: $(outputVars.DOCKER_IMAGE_BASE)"
+      echo "-------- DOCKER_IMAGE: $(outputVars.DOCKER_IMAGE)"
+      echo "-------- DOCKER_IMAGE_LATEST: $(outputVars.DOCKER_IMAGE_LATEST)"
+    displayName: 'Debug output variables'

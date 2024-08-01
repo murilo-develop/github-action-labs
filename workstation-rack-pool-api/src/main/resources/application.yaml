@@ -1,0 +1,92 @@
+quarkus:
+  banner:
+    enabled: true
+    path: xbox-banner.txt
+  http:
+    test-port: 0
+    test-ssl-port: 0
+    cors:
+      ~: true
+      origins: http://localhost:4200,https://rack-pool-api.icycliff-8f6c7aa3.westeurope.azurecontainerapps.io
+      headers: accept,authorization,content-type,x-requested-with
+      methods: GET,OPTIONS,PUT,POST,PATCH
+    auth:
+      permission:
+        default:
+          paths: /*
+          policy: authenticated
+  swagger-ui:
+    always-include: true
+  liquibase:
+    migrate-at-start: true
+    search-path:
+      - "db/changelog"
+    change-log: "local/changelog.xml"
+  datasource:
+    db-kind: postgresql
+    devservices:
+      enabled: true
+      reuse: false
+      image-name: "postgres:14.10-alpine"
+      container-env:
+        "POSTGRES_DB": "workstation-rack"
+        "POSTGRES_USER": "postgres"
+        "PASSWORD": "postgres"
+      port: 5433
+      volumes:
+        "db/init-db": "/docker-entrypoint-initdb.d"
+      db-name: "workstation-rack"
+      username: "postgres"
+      password: "postgres"
+    jdbc:
+      url: jdbc:postgresql://localhost:5433/workstation-rack?currentSchema=workstation_rack
+      initial-size: 2
+      min-size: 2
+      max-size: 5
+  hibernate-orm:
+    packages: com.bmw.ctw.workstation.rack.api
+    validate-in-dev-mode: false
+    database:
+      generation: none
+    log:
+      sql: ${hibernate_orm_log_sql:false}
+mp:
+  jwt:
+    verify:
+      publickey:
+        location: ${MSAL_AUTHORITY}/discovery/v2.0/keys
+      issuer: ${MSAL_AUTHORITY}/v2.0
+
+"%test":
+  quarkus:
+    liquibase:
+      enabled: false
+      migrate-at-start: false
+    datasource:
+      username: ${db_user:postgres}
+      password: ${db_password:postgres}
+      jdbc:
+        url: jdbc:postgresql://${db_host:localhost}:${db_port:5432}/${db_name:workstation-rack}?currentSchema=${db_schema:workstation_rack}
+        initial-size: ${db_pool_min_size:2}
+        min-size: ${db_pool_min_size:2}
+        max-size: ${db_pool_max_size:5}
+  mp:
+    jwt:
+      verify:
+        publickey:
+          location: msal/publicKey.pem
+        issuer: http://localhost
+
+"%prod":
+  quarkus:
+    liquibase:
+      enabled: false
+      migrate-at-start: false
+    datasource:
+      username: ${db_user:postgres}
+      password: ${db_password:postgres}
+      jdbc:
+        url: jdbc:postgresql://${db_host:localhost}:${db_port:5433}/${db_name:workstation-rack}?currentSchema=${db_schema:workstation_rack}
+        initial-size: ${db_pool_min_size:2}
+        min-size: ${db_pool_min_size:2}
+        max-size: ${db_pool_max_size:5}

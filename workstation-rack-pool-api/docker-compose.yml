@@ -1,0 +1,63 @@
+services:
+  postgres:
+    image: postgres:14.10-alpine
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: workstation-rack
+      POSTGRES_USER: postgres
+    ports:
+      - "5433:5432"
+    networks:
+      - workstation-rack-net
+    volumes:
+      - ./db/init-db:/docker-entrypoint-initdb.d
+    container_name: workstation-rack-db
+    healthcheck:
+      test: [ "CMD-SHELL", "psql -U postgres -d workstation-rack -t 15 -c 'SELECT 1'" ]
+      interval: "5s"
+      timeout: "15s"
+      retries: 10
+  liquibase:
+    image: liquibase/liquibase:latest-alpine
+    container_name: workstation-rack-liquibase
+    depends_on:
+      postgres:
+        condition: "service_healthy"
+    volumes:
+      - ./db/changelog:/liquibase/changelog
+    command: --logLevel=info --defaultsFile=/liquibase/changelog/liquibase-docker.properties --contexts=dev update
+    networks:
+      - workstation-rack-net
+  application:
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      - workstation-rack-net
+    environment:
+      - db_host=workstation-rack-db
+      - db_port=5432
+      - db_name=workstation-rack
+      - db_schema=workstation_rack
+      - db_user=postgres
+      - db_password=postgres
+      - db_pool_min_size=2
+      - db_pool_max_size=5
+      - JAVA_ENABLE_DEBUG=true
+      - JAVA_DEBUG_PORT=*:5005
+      - QUARKUS_PROFILE=prod
+    ports:
+      - "8080:8080"
+      - "5005:5005"
+    container_name: workstation-rack-application
+    depends_on:
+      postgres:
+        condition: "service_healthy"
+networks:
+  workstation-rack-net:
+    driver: bridge

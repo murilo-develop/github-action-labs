@@ -1,0 +1,35 @@
+# EditorConfig is awesome: https://editorconfig.org/
+
+# This is the file in the root of the project.
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+max_line_length = 180
+indent_style = space
+indent_size = 4
+tab_width = 4
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.{cmd,bat}]
+end_of_line = crlf
+
+[*.xml]
+indent_size = 4
+
+[*.json]
+indent_size = 2
+
+[*.{yml,yaml}]
+indent_size = 2
+
+[*.md]
+trim_trailing_whitespace = false
+
+[*.java]
+# Never use star imports
+ij_java_names_count_to_use_import_on_demand = 999
+ij_java_class_count_to_use_import_on_demand = 999
+ij_java_layout_static_imports_separately = true

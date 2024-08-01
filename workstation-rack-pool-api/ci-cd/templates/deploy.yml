@@ -1,0 +1,24 @@
+parameters:
+    - name: dockerImageLatest
+    - name: dbHost
+    - name: dbPort
+    - name: dbUser
+    - name: dbName
+    - name: dbSchema
+    - name: msalAuthority
+
+steps:
+ - task: AzureKeyVault@2
+   displayName: "Get container registry credentials from principal"
+   inputs:
+      azureSubscription: 'Service Principal'
+      KeyVaultName: 'jf-zen-project-vault'
+      SecretsFilter: 'academy-db-password'
+      RunAsPreJob: false
+ - task: AzureContainerApps@1
+   inputs:
+      azureSubscription: 'Service Principal'
+      containerAppName: 'rack-pool-api'
+      resourceGroup: 'RG-Java-Fullstack'
+      imageToDeploy: $(dockerImageLatest)
+      environmentVariables: QUARKUS_PROFILE=prod DB_NAME=${{ parameters.dbName }} DB_SCHEMA=${{ parameters.dbSchema }} DB_USER=${{ parameters.dbUser }} DB_PASSWORD=$(academy-db-password) DB_PORT=${{ parameters.dbPort }} DB_HOST=${{ parameters.dbHost }} MSAL_AUTHORITY=${{ parameters.msalAuthority }}
