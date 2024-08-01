@@ -2,6 +2,7 @@ package com.bmw.ctw.workstation.rack.api.team.control;
 
 import com.bmw.ctw.workstation.rack.api.team.entity.Team;
 import com.bmw.ctw.workstation.rack.api.team.entity.TeamMember;
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.Dependent;
 import jakarta.transaction.Transactional;
@@ -18,8 +19,8 @@ public class TeamMemberRepository implements PanacheRepository<TeamMember> {
     }
 
     private Team resolveTeam(TeamMember teamMember) {
-        Team team;
-        if (nonNull((team = teamMember.team))) {
+        Team team = teamMember.team;
+        if (nonNull(team)) {
             if (nonNull(team.id)) {
                 team = Team.findById(team.id);
             } else {

@@ -1,5 +1,5 @@
 parameters:
-    - name: dockerImageLatest
+    - name: dockerImage
     - name: dbHost
     - name: dbPort
     - name: dbUser
@@ -20,5 +20,5 @@ steps:
       azureSubscription: 'Service Principal'
       containerAppName: 'rack-pool-api'
       resourceGroup: 'RG-Java-Fullstack'
-      imageToDeploy: $(dockerImageLatest)
+      imageToDeploy: $(dockerImage)
       environmentVariables: QUARKUS_PROFILE=prod DB_NAME=${{ parameters.dbName }} DB_SCHEMA=${{ parameters.dbSchema }} DB_USER=${{ parameters.dbUser }} DB_PASSWORD=$(academy-db-password) DB_PORT=${{ parameters.dbPort }} DB_HOST=${{ parameters.dbHost }} MSAL_AUTHORITY=${{ parameters.msalAuthority }}

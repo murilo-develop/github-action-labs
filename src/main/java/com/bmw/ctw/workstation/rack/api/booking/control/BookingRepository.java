@@ -33,11 +33,11 @@ public class BookingRepository implements PanacheRepository<Booking> {
     @Transactional
     public BookingDTO insertBooking(BookingDTO bookingDTO) {
         Booking booking = new Booking();
-        booking.teamMember = TeamMember.findById(bookingDTO.getTeamMember().getId());
-        booking.workStation = WorkStation.findById(bookingDTO.getWorkStation().id);
-        booking.bookingFrom = bookingDTO.getBookingFrom();
-        booking.bookingTo = bookingDTO.getBookingTo();
-        booking.status = bookingDTO.getStatus();
+        booking.teamMember = TeamMember.findById(bookingDTO.teamMember().id());
+        booking.workStation = WorkStation.findById(bookingDTO.workStation().id);
+        booking.bookingFrom = bookingDTO.bookingFrom();
+        booking.bookingTo = bookingDTO.bookingTo();
+        booking.status = bookingDTO.status();
 
         booking.persist();
 
@@ -46,15 +46,15 @@ public class BookingRepository implements PanacheRepository<Booking> {
 
     @Transactional
     public void updateBooking(UUID bookingId, BookingDTO bookingDTO) {
-        TeamMember teamMember = TeamMember.findById(bookingDTO.getTeamMember().getId());
-        WorkStation workStation = WorkStation.findById(bookingDTO.getWorkStation().id);
+        TeamMember teamMember = TeamMember.findById(bookingDTO.teamMember().id());
+        WorkStation workStation = WorkStation.findById(bookingDTO.workStation().id);
 
         update("#" + BOOKING_UPDATE, Map.of(
             "teamMember", teamMember,
             "workStation", workStation,
-            "bookingFrom", bookingDTO.getBookingFrom(),
-            "bookingTo", bookingDTO.getBookingTo(),
-            "status", bookingDTO.getStatus(),
+            "bookingFrom", bookingDTO.bookingFrom(),
+            "bookingTo", bookingDTO.bookingTo(),
+            "status", bookingDTO.status(),
             "id", bookingId)
         );
     }

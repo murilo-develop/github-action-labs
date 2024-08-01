@@ -1,18 +1,7 @@
 variables:
-
-  BRANCH_NAME: $[replace(variables['Build.SourceBranch'], 'refs/heads/', '')]
-  IS_MAIN_BRANCH: $[eq(variables['BRANCH_NAME'], 'main')]
-  IS_PULL_REQUEST: $[eq(variables['Build.Reason'], 'PullRequest')]
-  IS_TARGET_MAIN: $[eq(variables['System.PullRequest.TargetBranch'], 'refs/heads/main')]
-
   DOCKER_REGISTRY: 'academyacr.azurecr.io'
   DOCKER_APP: 'rack-pool-api'
   DOCKER_IMAGE_BASE: '$(DOCKER_REGISTRY)/$(DOCKER_APP)'
-
-  GIT_USER_EMAIL: 'JavaAcademy@criticaltechworks.com'
-  GIT_USERNAME: 'azuredevops'
-
-  DEPLOY_BRANCH: 'main'
 
   DB_URL: 'jdbc:postgresql://zen-project-academy.postgres.database.azure.com:5432/workstation-rack'
   DB_HOST: 'zen-project-academy.postgres.database.azure.com'

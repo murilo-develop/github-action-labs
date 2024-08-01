@@ -1,14 +1,14 @@
 # Work Station Rack Pool
 
-Through the APIs provided in this Java WebService we can manage bookings for a pool of Work Station Rack.
+Through the APIs provided in this Java WebService we can manage bookings from a pool of Work Station Rack.
 
 ## What is a Work Station Rack?
 
-A Work Station Rack it is a set of the Vehicle's hardware components where the product teams can try theirs implementation.
+A Work Station Rack is a set of the Vehicle's hardware components where the product teams can try their implementation.
 
-## Why is this service for?
+## What is this service used for?
 
-There are different sort of Work Station Racks and consequently each one has its own specific use. What causes concurrence among the product teams.
+There are different sort of Work Station Racks and consequently each one has its own specific use case. This causes concurrency among the product teams.
 
 By using this service each product team can book a timeframe to use a specific Work Station Rack.
 
@@ -16,11 +16,11 @@ Therefore, the product team can plan better and organize themselves according to
 
 ## Main GOAL
 
-Become the source of truth about the availability of Work Station Racks, also the only tool for the BMW's product teams manage the bookings for a pool of Work Station Rack.
+Become the source of truth regarding the availability of Work Station Racks. It will also be the only tool for the BMW's product teams to manage the bookings for a pool of Work Station Rack.
 
 ## Application architecture
 
-We aim for a combination of elegance and simplicity. The application design will evolve during development as engineers create code to meet the business needs, without any hard design defined.
+We aim for a combination of elegance and simplicity. The application design will evolve during development as engineers create code to meet the business needs, without any hard rules defined regarding the design.
 
 However, some standards are necessary to allow the collaboration among the team members.
 
@@ -99,42 +99,38 @@ Reference books:
 * [Postgres](https://www.postgresql.org/about/)
 * [Docker](https://docs.docker.com/get-started/overview/)
 
-### [Set IntelliJ](SETUP-INTELLIJ.md)
+### [Set up IntelliJ](SETUP-INTELLIJ.md)
 
 ## Running the application
 
 > <span style="color: #800080">**_IMPORTANT_**</span>
 > 
-> Docker must be installed, it should be up and running in the environment before try to run the application.
+> Docker must be installed, it should be up and running in the environment before trying to run the application.
 
-We two different ways to run the application.
+There are three different ways to run the application.
 
 ### Containerized (Docker)
 
 #### 1) Build the application
-- Open an external terminal or an embedded terminal in IntelliJ and the command bellow.<br/>
+- Open an external terminal or an embedded terminal in IntelliJ and the command below.<br/>
     ```
     ./mvnw clean package
     ```
-  Should be displayed as output success messages about test execution and a build success message.
+  Test execution success messages and a build success message should be displayed as output 
 
 #### 2) Build and startup the application's containers
-- Open an external terminal or an embedded terminal in IntelliJ and the command bellow.<br/>
+- Open an external terminal or an embedded terminal in IntelliJ and the command below.<br/>
     ```
     docker-compose up --build -d
     ```
-  Should be display as output success messages about the creation and start-up of application's container.
+  The creation and start-up of application's container success messages should be displayed as output
 
-#### 3) Do a smoke test
-- Open the file [application-service.http](src/test/resources/application-service.http)
-- Search for "Run with: No Environment" in the file top bar.
-- Change it to local.
-- Click up on the play button on the left of any http resource described, for instance, "Create a Team".
+#### 3) [Do a smoke test](src/test/resources/SMOKE-TEST-README.md)
 
 ### Quarkus standalone + Database Containerized (Docker)
 
 #### 1) Build and startup the database containers
-- Open an external terminal or an embedded terminal in IntelliJ and the command bellow.<br/>
+- Open an external terminal or an embedded terminal in IntelliJ and the command below.<br/>
     ```
     docker-compose -f docker-compose-sources.yml up --build -d
     ```
@@ -160,11 +156,33 @@ If you want to build an _über-jar_, execute the following command:
 
 The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
 
-#### 4) Do a smoke test
-- Open the file [application-service.http](src/test/resources/application-service.http)
-- Search for "Run with: No Environment" in the file top bar.
-- Change it to local.
-- Click up on the play button on the left of any http resource described, for instance, "Create a Team".
+#### 4) [Do a smoke test](src/test/resources/SMOKE-TEST-README.md)
+
+### Quarkus Dev Mode (live code reload)
+
+#### 1) Build the application
+- Open an external terminal or an embedded terminal in IntelliJ and the command below.<br/>
+    ```
+    ./mvnw clean package
+    ```
+  Should be displayed as output success messages about test execution and a build success message.
+
+#### 2) Set the environment variables
+- Open an external terminal or an embedded terminal in IntelliJ and run the command below.<br/>
+    ```
+    set -a
+    source .env.sample
+    set +a
+    ```
+  There is no output. However, from now on you should use the same terminal session to perform the step below.
+
+#### 3) Running application in Quarkus Dev mode
+- In the same terminal session that you performed the second step, run the command below.<br/>
+    ```
+    ./mvnw quarkus:dev
+    ```
+
+#### 4) [Do a smoke test](src/test/resources/SMOKE-TEST-README.md)
 
 > <span style="color: #0000ff">**_NOTE_**</span>
 > 

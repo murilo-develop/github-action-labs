@@ -23,8 +23,6 @@ stages:
         steps:
           - template: templates/get-variables.yml
             parameters:
-              isMain: $(IS_MAIN_BRANCH)
-              dockerRegistry: $(DOCKER_REGISTRY)
               dockerImageBase: $(DOCKER_IMAGE_BASE)
 
   - stage: UnitIntegrationTests

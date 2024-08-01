@@ -101,45 +101,45 @@ public class BookingResourceIT extends IntegrationTestBase {
         anotherWorkStation.persist();
 
         this.aTeamDTO = this.aTeamDTOBuilder.with(builder -> {
-            builder.getId = aTeam.id;
-            builder.getName = aTeam.name;
-            builder.getProduct = aTeam.product;
+            builder.id = aTeam.id;
+            builder.name = aTeam.name;
+            builder.product = aTeam.product;
         }).build();
 
         this.anotherTeamDTO = this.aTeamDTOBuilder.with(builder -> {
-            builder.getId = anotherTeam.id;
-            builder.getName = anotherTeam.name;
-            builder.getProduct = anotherTeam.product;
+            builder.id = anotherTeam.id;
+            builder.name = anotherTeam.name;
+            builder.product = anotherTeam.product;
         }).build();
 
         this.aTeamMemberDTO = this.aTeamMemberDTOBuilder.with(builder -> {
-            builder.getId = aTeamMember.id;
-            builder.getCtwCode = aTeamMember.ctwCode;
-            builder.getName = aTeamMember.name;
-            builder.getTeamDTO = this.aTeamDTO;
+            builder.id = aTeamMember.id;
+            builder.ctwCode = aTeamMember.ctwCode;
+            builder.name = aTeamMember.name;
+            builder.team = this.aTeamDTO;
         }).build();
 
         this.anotherTeamMemberDTO = this.aTeamMemberDTOBuilder.with(builder -> {
-            builder.getId = anotherTeamMember.id;
-            builder.getCtwCode = anotherTeamMember.ctwCode;
-            builder.getName = anotherTeamMember.name;
-            builder.getTeamDTO = this.anotherTeamDTO;
+            builder.id = anotherTeamMember.id;
+            builder.ctwCode = anotherTeamMember.ctwCode;
+            builder.name = anotherTeamMember.name;
+            builder.team = this.anotherTeamDTO;
         }).build();
 
         this.aBookingDTO = this.aBookingDTOBuilder.with(builder -> {
-            builder.getTeamMember = this.aTeamMemberDTO;
-            builder.getWorkStation = aWorkStation;
-            builder.getBookingFrom = LocalDateTime.of(2024, 7, 1, 0, 0, 0);
-            builder.getBookingTo = LocalDateTime.of(2024, 7, 2, 0, 0, 0);
-            builder.getStatus = BookingStatus.PENDING;
+            builder.teamMember = this.aTeamMemberDTO;
+            builder.workStation = aWorkStation;
+            builder.bookingFrom = LocalDateTime.of(2024, 7, 1, 0, 0, 0);
+            builder.bookingTo = LocalDateTime.of(2024, 7, 2, 0, 0, 0);
+            builder.status = BookingStatus.PENDING;
         }).build();
 
         this.anotherBookingDTO = this.aBookingDTOBuilder.with(builder -> {
-            builder.getTeamMember = this.anotherTeamMemberDTO;
-            builder.getWorkStation = anotherWorkStation;
-            builder.getBookingFrom = LocalDateTime.of(2024, 7, 3, 0, 0, 0);
-            builder.getBookingTo = LocalDateTime.of(2024, 7, 4, 0, 0, 0);
-            builder.getStatus = BookingStatus.CANCELED;
+            builder.teamMember = this.anotherTeamMemberDTO;
+            builder.workStation = anotherWorkStation;
+            builder.bookingFrom = LocalDateTime.of(2024, 7, 3, 0, 0, 0);
+            builder.bookingTo = LocalDateTime.of(2024, 7, 4, 0, 0, 0);
+            builder.status = BookingStatus.CANCELED;
         }).build();
     }
 
@@ -161,16 +161,16 @@ public class BookingResourceIT extends IntegrationTestBase {
         // then
         BookingDTO managedBooking = response.body().as(BookingDTO.class);
         this.aBookingDTO = new BookingDTO(
-            managedBooking.getId(),
-            this.aBookingDTO.getTeamMember(),
-            this.aBookingDTO.getWorkStation(),
-            this.aBookingDTO.getBookingFrom(),
-            this.aBookingDTO.getBookingTo(),
-            this.aBookingDTO.getStatus()
+            managedBooking.id(),
+            this.aBookingDTO.teamMember(),
+            this.aBookingDTO.workStation(),
+            this.aBookingDTO.bookingFrom(),
+            this.aBookingDTO.bookingTo(),
+            this.aBookingDTO.status()
         );
         String location = response.getHeader(HttpHeaders.LOCATION);
         assertThat("Should return 201 created code", response.getStatusCode(), is(CREATED.getStatusCode()));
-        assertThat("Should have Booking Id in the Header under Location key", location, containsString(Routes.BOOKING + "/" + managedBooking.getId()));
+        assertThat("Should have Booking Id in the Header under Location key", location, containsString(Routes.BOOKING + "/" + managedBooking.id()));
         assertThat("Should Booking DTO equals to the Booking DTO managed", this.aBookingDTO, is(equalTo(managedBooking)));
     }
 
@@ -181,7 +181,7 @@ public class BookingResourceIT extends IntegrationTestBase {
         Response response = given()
             .contentType(ContentType.JSON)
             .when()
-            .get("/" + Routes.BOOKING + "/" + this.aBookingDTO.getId());
+            .get("/" + Routes.BOOKING + "/" + this.aBookingDTO.id());
 
         // then
         BookingDTO managedBookingDTO = response.body().as(BookingDTO.class);
@@ -194,12 +194,12 @@ public class BookingResourceIT extends IntegrationTestBase {
     void shouldUpdateBooking() {
         // given
         this.anotherBookingDTO = new BookingDTO(
-            this.aBookingDTO.getId(),
-            this.anotherBookingDTO.getTeamMember(),
-            this.anotherBookingDTO.getWorkStation(),
-            this.anotherBookingDTO.getBookingFrom(),
-            this.anotherBookingDTO.getBookingTo(),
-            this.anotherBookingDTO.getStatus()
+            this.aBookingDTO.id(),
+            this.anotherBookingDTO.teamMember(),
+            this.anotherBookingDTO.workStation(),
+            this.anotherBookingDTO.bookingFrom(),
+            this.anotherBookingDTO.bookingTo(),
+            this.anotherBookingDTO.status()
         );
 
         // when
@@ -207,7 +207,7 @@ public class BookingResourceIT extends IntegrationTestBase {
             .contentType(ContentType.JSON)
             .body(JSONB.toJson(this.anotherBookingDTO, BookingDTO.class))
             .when()
-            .put("/" + Routes.BOOKING + "/" + this.anotherBookingDTO.getId());
+            .put("/" + Routes.BOOKING + "/" + this.anotherBookingDTO.id());
 
         // then
         BookingDTO managedBooking = response.body().as(BookingDTO.class);
@@ -228,12 +228,12 @@ public class BookingResourceIT extends IntegrationTestBase {
         // then
         BookingDTO managedBooking = response.body().as(BookingDTO.class);
         this.anotherBookingDTO = new BookingDTO(
-            managedBooking.getId(),
-            this.anotherBookingDTO.getTeamMember(),
-            this.anotherBookingDTO.getWorkStation(),
-            this.anotherBookingDTO.getBookingFrom(),
-            this.anotherBookingDTO.getBookingTo(),
-            this.anotherBookingDTO.getStatus()
+            managedBooking.id(),
+            this.anotherBookingDTO.teamMember(),
+            this.anotherBookingDTO.workStation(),
+            this.anotherBookingDTO.bookingFrom(),
+            this.anotherBookingDTO.bookingTo(),
+            this.anotherBookingDTO.status()
         );
         assertThat("Should return 201 created code", response.getStatusCode(), is(CREATED.getStatusCode()));
         assertThat("Should Booking DTO equals to the Booking DTO managed", this.anotherBookingDTO, is(equalTo(managedBooking)));
@@ -246,7 +246,7 @@ public class BookingResourceIT extends IntegrationTestBase {
         Response response = given()
             .contentType(ContentType.JSON)
             .when()
-            .delete("/" + Routes.BOOKING + "/" + this.anotherBookingDTO.getId());
+            .delete("/" + Routes.BOOKING + "/" + this.anotherBookingDTO.id());
 
         // then
         assertThat("Should return 204 no content code", response.getStatusCode(), is(NO_CONTENT.getStatusCode()));

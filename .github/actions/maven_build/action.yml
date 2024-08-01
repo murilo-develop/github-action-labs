@@ -1,0 +1,8 @@
+name: Build and Test Application
+description: Build and Test application with Maven
+runs:
+  using: composite
+  steps:
+    - run: |
+        mvn -B clean verify --file pom.xml
+      shell: bash

@@ -26,8 +26,6 @@ stages:
         steps:
           - template: templates/get-variables.yml
             parameters:
-              isMain: $(IS_MAIN_BRANCH)
-              dockerRegistry: $(DOCKER_REGISTRY)
               dockerImageBase: $(DOCKER_IMAGE_BASE)
 
   - stage: DependencyPluginPropertyCheck
@@ -61,16 +59,13 @@ stages:
       - BuildPackage
     variables:
       dockerImage: $[stageDependencies.GetAllVariables.GetAllVariables.outputs['outputVars.DOCKER_IMAGE']]
-      dockerImageLatest: $[stageDependencies.GetAllVariables.GetAllVariables.outputs['outputVars.DOCKER_IMAGE_LATEST']]
     jobs:
       - job:
         steps:
           - template: templates/build-image.yml
             parameters:
-              appName: $(APP_NAME)
-              dockerRegistry: $(DOCKER_REGISTRY)
               dockerImage: $(dockerImage)
-              dockerImageLatest: $(dockerImageLatest)
+              dockerRegistry:  $(DOCKER_REGISTRY)
 
   - stage: Deploy
     displayName: 'Deploy BE to Container APP'
@@ -78,14 +73,14 @@ stages:
       - GetAllVariables
       - BuildImage
     variables:
-      dockerImageLatest: $[stageDependencies.GetAllVariables.GetAllVariables.outputs['outputVars.DOCKER_IMAGE_LATEST']]
+      dockerImage: $[stageDependencies.GetAllVariables.GetAllVariables.outputs['outputVars.DOCKER_IMAGE']]
     jobs:
       - job: DeployApp
         displayName: 'Deploy app'
         steps:
           - template: templates/deploy.yml
             parameters:
-              dockerImageLatest: $(dockerImageLatest)
+              dockerImage: $(dockerImage)
               dbHost: $(DB_HOST)
               dbUser: $(DB_USER)
               dbPort: $(DB_PORT)

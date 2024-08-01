@@ -4,9 +4,9 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-public record TeamDTO(UUID getId,
-                      String getName,
-                      String getProduct) {
+public record TeamDTO(UUID id,
+                      String name,
+                      String product) {
 
     @Override
     public boolean equals(Object o) {
@@ -17,18 +17,18 @@ public record TeamDTO(UUID getId,
             return false;
         }
         TeamDTO that = (TeamDTO) o;
-        return Objects.equals(this.getName(), that.getName()) && Objects.equals(this.getProduct(), that.getProduct());
+        return Objects.equals(this.name(), that.name()) && Objects.equals(this.product(), that.product());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.getName(), this.getProduct());
+        return Objects.hash(this.name(), this.product());
     }
 
     public static class Builder {
-        public UUID getId;
-        public String getName;
-        public String getProduct;
+        public UUID id;
+        public String name;
+        public String product;
 
         public TeamDTO.Builder with(Consumer<TeamDTO.Builder> builder) {
             builder.accept(this);
@@ -37,9 +37,9 @@ public record TeamDTO(UUID getId,
 
         public TeamDTO build() {
             return new TeamDTO(
-                this.getId,
-                this.getName,
-                this.getProduct
+                this.id,
+                this.name,
+                this.product
             );
         }
     }

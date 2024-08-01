@@ -4,10 +4,10 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-public record TeamMemberDTO(UUID getId,
-                            String getCtwCode,
-                            String getName,
-                            TeamDTO getTeamDTO) {
+public record TeamMemberDTO(UUID id,
+                            String ctwCode,
+                            String name,
+                            TeamDTO team) {
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -17,19 +17,19 @@ public record TeamMemberDTO(UUID getId,
             return false;
         }
         TeamMemberDTO that = (TeamMemberDTO) o;
-        return Objects.equals(this.getCtwCode(), that.getCtwCode());
+        return Objects.equals(this.ctwCode(), that.ctwCode());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(this.getCtwCode());
+        return Objects.hashCode(this.ctwCode());
     }
 
     public static class Builder {
-        public UUID getId;
-        public String getCtwCode;
-        public String getName;
-        public TeamDTO getTeamDTO;
+        public UUID id;
+        public String ctwCode;
+        public String name;
+        public TeamDTO team;
 
         public TeamMemberDTO.Builder with(Consumer<TeamMemberDTO.Builder> builder) {
             builder.accept(this);
@@ -38,10 +38,10 @@ public record TeamMemberDTO(UUID getId,
 
         public TeamMemberDTO build() {
             return new TeamMemberDTO(
-                this.getId,
-                this.getCtwCode,
-                this.getName,
-                this.getTeamDTO
+                this.id,
+                this.ctwCode,
+                this.name,
+                this.team
             );
         }
     }

@@ -7,7 +7,7 @@ quarkus:
     test-ssl-port: 0
     cors:
       ~: true
-      origins: http://localhost:4200,https://rack-pool-api.icycliff-8f6c7aa3.westeurope.azurecontainerapps.io
+      origins: http://localhost:4200,https://rack-pool-ui.icycliff-8f6c7aa3.westeurope.azurecontainerapps.io
       headers: accept,authorization,content-type,x-requested-with
       methods: GET,OPTIONS,PUT,POST,PATCH
     auth:

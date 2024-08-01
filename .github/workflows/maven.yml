@@ -16,7 +16,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -27,9 +26,22 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
         cache: maven
-    - name: Build with Maven
-      run: mvn -B package --file pom.xml
 
-    # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
-    - name: Update dependency graph
-      uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
+    - uses: murilo-develop/github-action-labs/.github/actions/maven_build@main
+
+    - uses: murilo-develop/github-action-labs/.github/actions/docker_build@main
+      with:
+        dockerfile_path: ./Dockerfile
+        image_name: "murilo"
+        tag_name: "1"
+
+    # Login in Docker Hub
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - uses: murilo-develop/github-action-labs/.github/actions/docker_push@main
+      with:
+        dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}

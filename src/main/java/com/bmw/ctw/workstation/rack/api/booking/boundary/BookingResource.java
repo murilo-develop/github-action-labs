@@ -49,7 +49,7 @@ public class BookingResource {
     public Response createBooking(BookingDTO bookingDTO) {
         BookingDTO bookingManaged = this.bookingRepository.insertBooking(bookingDTO);
         return Response
-            .created(URI.create(Routes.BOOKING + "/" + bookingManaged.getId()))
+            .created(URI.create(Routes.BOOKING + "/" + bookingManaged.id()))
             .entity(bookingManaged)
             .build();
     }
@@ -66,7 +66,7 @@ public class BookingResource {
         } else {
             BookingDTO managedBooking = this.bookingRepository.insertBooking(bookingDTO);
             response = Response
-                .created(URI.create(Routes.TEAM + "/" + managedBooking.getId()))
+                .created(URI.create(Routes.TEAM + "/" + managedBooking.id()))
                 .entity(managedBooking)
                 .build();
         }

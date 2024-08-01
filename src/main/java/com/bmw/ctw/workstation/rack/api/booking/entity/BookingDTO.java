@@ -8,12 +8,12 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-public record BookingDTO(UUID getId,
-                         TeamMemberDTO getTeamMember,
-                         WorkStation getWorkStation,
-                         LocalDateTime getBookingFrom,
-                         LocalDateTime getBookingTo,
-                         BookingStatus getStatus) {
+public record BookingDTO(UUID id,
+                         TeamMemberDTO teamMember,
+                         WorkStation workStation,
+                         LocalDateTime bookingFrom,
+                         LocalDateTime bookingTo,
+                         BookingStatus status) {
 
     @Override
     public boolean equals(Object o) {
@@ -24,26 +24,26 @@ public record BookingDTO(UUID getId,
             return false;
         }
         BookingDTO that = (BookingDTO) o;
-        return Objects.equals(this.getId(), that.getId())
-            && Objects.equals(this.getTeamMember(), that.getTeamMember())
-            && Objects.equals(this.getWorkStation(), that.getWorkStation())
-            && Objects.equals(this.getBookingFrom(), that.getBookingFrom())
-            && Objects.equals(this.getBookingTo(), that.getBookingTo())
-            && this.getStatus() == that.getStatus();
+        return Objects.equals(this.id(), that.id())
+            && Objects.equals(this.teamMember(), that.teamMember())
+            && Objects.equals(this.workStation(), that.workStation())
+            && Objects.equals(this.bookingFrom(), that.bookingFrom())
+            && Objects.equals(this.bookingTo(), that.bookingTo())
+            && this.status() == that.status();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.getId(), this.getTeamMember(), this.getWorkStation(), this.getBookingFrom(), this.getBookingTo(), this.getStatus());
+        return Objects.hash(this.id(), this.teamMember(), this.workStation(), this.bookingFrom(), this.bookingTo(), this.status());
     }
 
     public static class Builder {
-        public UUID getId;
-        public TeamMemberDTO getTeamMember;
-        public WorkStation getWorkStation;
-        public LocalDateTime getBookingFrom;
-        public LocalDateTime getBookingTo;
-        public BookingStatus getStatus;
+        public UUID id;
+        public TeamMemberDTO teamMember;
+        public WorkStation workStation;
+        public LocalDateTime bookingFrom;
+        public LocalDateTime bookingTo;
+        public BookingStatus status;
 
         public Builder with(Consumer<Builder> builder) {
             builder.accept(this);
@@ -52,12 +52,12 @@ public record BookingDTO(UUID getId,
 
         public BookingDTO build() {
             return new BookingDTO(
-                this.getId,
-                this.getTeamMember,
-                this.getWorkStation,
-                this.getBookingFrom,
-                this.getBookingTo,
-                this.getStatus
+                this.id,
+                this.teamMember,
+                this.workStation,
+                this.bookingFrom,
+                this.bookingTo,
+                this.status
             );
         }
     }

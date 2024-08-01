@@ -36,7 +36,7 @@ services:
           memory: 1G
     build:
       context: .
-      dockerfile: src/main/docker/Dockerfile.jvm
+      dockerfile: Dockerfile
     networks:
       - workstation-rack-net
     environment:
@@ -51,6 +51,7 @@ services:
       - JAVA_ENABLE_DEBUG=true
       - JAVA_DEBUG_PORT=*:5005
       - QUARKUS_PROFILE=prod
+      - MSAL_AUTHORITY=https://login.microsoftonline.com/61f30b8e-4f6b-44fe-9bc2-041e3a9f7346
     ports:
       - "8080:8080"
       - "5005:5005"

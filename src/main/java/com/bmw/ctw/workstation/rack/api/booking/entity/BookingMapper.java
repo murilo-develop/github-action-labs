@@ -8,16 +8,16 @@ import org.mapstruct.factory.Mappers;
 public interface BookingMapper {
     BookingMapper INSTANCE = Mappers.getMapper(BookingMapper.class);
 
-    @Mapping(target = "getId", source = "id")
-    @Mapping(target = "getTeamMember.getId", source = "teamMember.id")
-    @Mapping(target = "getTeamMember.getCtwCode", source = "teamMember.ctwCode")
-    @Mapping(target = "getTeamMember.getName", source = "teamMember.name")
-    @Mapping(target = "getTeamMember.getTeamDTO.getId", source = "teamMember.team.id")
-    @Mapping(target = "getTeamMember.getTeamDTO.getName", source = "teamMember.team.name")
-    @Mapping(target = "getTeamMember.getTeamDTO.getProduct", source = "teamMember.team.product")
-    @Mapping(target = "getWorkStation", source = "workStation")
-    @Mapping(target = "getBookingFrom", source = "bookingFrom")
-    @Mapping(target = "getBookingTo", source = "bookingTo")
-    @Mapping(target = "getStatus", source = "status")
+    @Mapping(target = "id", source = "id")
+    @Mapping(target = "teamMember.id", source = "teamMember.id")
+    @Mapping(target = "teamMember.ctwCode", source = "teamMember.ctwCode")
+    @Mapping(target = "teamMember.name", source = "teamMember.name")
+    @Mapping(target = "teamMember.team.id", source = "teamMember.team.id")
+    @Mapping(target = "teamMember.team.name", source = "teamMember.team.name")
+    @Mapping(target = "teamMember.team.product", source = "teamMember.team.product")
+    @Mapping(target = "workStation", source = "workStation")
+    @Mapping(target = "bookingFrom", source = "bookingFrom")
+    @Mapping(target = "bookingTo", source = "bookingTo")
+    @Mapping(target = "status", source = "status")
     BookingDTO toBookingDTO(Booking booking);
 }
