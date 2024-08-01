@@ -1,0 +1,38 @@
+#https://learn.microsoft.com/en-us/azure/devops/pipelines
+
+name: PipelineForPullRequest
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  - template: templates/constants.yml
+  - name: 'APP_NAME'
+    value: 'rack-pool-api'
+
+trigger: none
+
+stages:
+
+  - stage: GetAllVariables
+    displayName: 'Collect all needed variables for the pipeline usage'
+    condition: always()
+    jobs:
+      - job: GetAllVariables
+        displayName: 'Export variables for the environment'
+        steps:
+          - template: templates/get-variables.yml
+            parameters:
+              isMain: $(IS_MAIN_BRANCH)
+              dockerRegistry: $(DOCKER_REGISTRY)
+              dockerImageBase: $(DOCKER_IMAGE_BASE)
+
+  - stage: UnitIntegrationTests
+    displayName: 'Execute Unit and Integration tests'
+    dependsOn: GetAllVariables
+    condition: succeeded()
+    jobs:
+      - job:
+        steps:
+          - template: templates/run-automated-tests.yml
+

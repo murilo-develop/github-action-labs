@@ -36,7 +36,7 @@ services:
           memory: 1G
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: src/main/docker/Dockerfile.jvm
     networks:
       - workstation-rack-net
     environment:

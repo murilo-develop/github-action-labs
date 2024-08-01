@@ -1,0 +1,23 @@
+parameters:
+  - name: dbUrl
+  - name: dbUser
+  - name: dbConnectUsername
+
+steps:
+- task: AzureKeyVault@2
+  displayName: "Get database password"
+  inputs:
+    azureSubscription: 'Service Principal'
+    KeyVaultName: 'jf-zen-project-vault'
+    SecretsFilter: 'academy-db-password'
+    RunAsPreJob: false
+- bash: |
+    echo "Setting environment variables for Liquibase"
+    export DB_URL='${{ parameters.dbUrl }}'
+    export DB_USER='${{ parameters.dbUser }}'
+    export DB_CONNECT_USERNAME='${{ parameters.dbConnectUsername }}'
+    export DB_PASSWORD='$(academy-db-password)'
+    echo "Run check-and-update-liquibase.sh"
+    chmod +x ci-cd/scripts/check-and-update-liquibase.sh
+    ./ci-cd/scripts/check-and-update-liquibase.sh
+  displayName: 'Run Check and Update Liquibase'

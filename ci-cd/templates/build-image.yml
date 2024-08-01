@@ -1,0 +1,34 @@
+parameters:
+  - name: appName
+  - name: dockerRegistry
+  - name: dockerImage
+  - name: dockerImageLatest
+
+steps:
+  - bash: |
+      echo "---- DEBUG Parameters: "
+      echo "-------- appName: ${{ parameters.appName }}"
+      echo "-------- dockerRegistry: ${{ parameters.dockerRegistry }}"
+      echo "-------- dockerImage: ${{ parameters.dockerImage }}"
+      echo "-------- dockerImageLatest: ${{ parameters.dockerImageLatest }}"
+    displayName: 'Debug input parameters'
+  - task: DownloadBuildArtifacts@1
+    inputs:
+      buildType: 'current'
+      artifactName: 'quarkus-app'
+      downloadPath: '$(System.DefaultWorkingDirectory)/target'
+    displayName: 'Download the previous generated maven package'
+
+  - task: AzureKeyVault@2
+    displayName: "Get container registry credentials from principal"
+    inputs:
+      azureSubscription: 'Service Principal'
+      KeyVaultName: 'jf-academy'
+      SecretsFilter: 'acr-username,acr-password'
+      RunAsPreJob: false
+  - bash: |
+      docker login --username=$(acr-username) --password=$(acr-password) ${{ parameters.dockerRegistry }}
+      docker build -t ${{ parameters.dockerImage }} -t ${{ parameters.dockerImageLatest }} .
+      docker push ${{ parameters.dockerImage }}
+      docker push ${{ parameters.dockerImageLatest }}
+    displayName: 'Build and push the docker image'

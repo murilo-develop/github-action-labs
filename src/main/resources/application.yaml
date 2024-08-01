@@ -50,6 +50,9 @@ quarkus:
       generation: none
     log:
       sql: ${hibernate_orm_log_sql:false}
+  security:
+    auth:
+      enabled: true
 mp:
   jwt:
     verify:
@@ -58,18 +61,6 @@ mp:
       issuer: ${MSAL_AUTHORITY}/v2.0
 
 "%test":
-  quarkus:
-    liquibase:
-      enabled: false
-      migrate-at-start: false
-    datasource:
-      username: ${db_user:postgres}
-      password: ${db_password:postgres}
-      jdbc:
-        url: jdbc:postgresql://${db_host:localhost}:${db_port:5432}/${db_name:workstation-rack}?currentSchema=${db_schema:workstation_rack}
-        initial-size: ${db_pool_min_size:2}
-        min-size: ${db_pool_min_size:2}
-        max-size: ${db_pool_max_size:5}
   mp:
     jwt:
       verify:
