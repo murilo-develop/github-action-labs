@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: workstation-rack-deployment
+  labels:
+    app: workstation-rack-application
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: workstation-rack-application
+  template:
+    metadata:
+      labels:
+        app: workstation-rack-application
+    spec:
+      containers:
+        - name: workstation-rack-application
+          image: github-actions-labs:latest
+          ports:
+            - containerPort: 8080
+            - containerPort: 5005

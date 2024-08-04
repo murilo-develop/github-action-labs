@@ -43,4 +43,4 @@ nb-configuration.xml
 /.quarkus/cli/plugins/
 
 # Miscellaneous
-muriloandrade599
+docker.secrets

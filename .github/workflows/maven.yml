@@ -32,8 +32,7 @@ jobs:
     - uses: murilo-develop/github-action-labs/.github/actions/docker_build@main
       with:
         dockerfile_path: ./Dockerfile
-        image_name: "murilo"
-        tag_name: "1"
+        image_name: "github-actions-labs"
 
     # Login in Docker Hub
     - name: Login to Docker Hub

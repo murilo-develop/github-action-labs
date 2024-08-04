@@ -16,11 +16,11 @@ inputs:
 runs:
   using: composite
   steps:
-    # Set image's properties in GITHUB_ENV
+    # Set image's properties in GITHUB_ENV (echo "TAG=$(date +%s)" >> $GITHUB_ENV)
     - name: Set image's properties in GITHUB_ENV
       run: |
             if [ -z "${{ inputs.tag_name }}" ]; then
-              echo "TAG=$(date +%s)" >> $GITHUB_ENV
+              echo "TAG=latest" >> $GITHUB_ENV
             else
               echo "TAG=${{ inputs.tag_name }}" >> $GITHUB_ENV
             fi
